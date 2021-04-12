@@ -11,9 +11,6 @@ export class ProductsService {
 
   constructor(private http: HttpClient, public router: Router) { }
 
-
- 
-
   getProducts(storeDomain: string){
     return this.http.get(`${this.endpoint}/byStoreDomain/${storeDomain}`);
   }

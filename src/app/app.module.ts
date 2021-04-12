@@ -32,6 +32,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatDialogModule} from '@angular/material/dialog';
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import {MatExpansionModule} from '@angular/material/expansion';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 //import { NgMatSearchBarModule } from 'ng-mat-search-bar';
 
@@ -57,7 +58,8 @@ import { SidenavComponent } from './components/sidenav/sidenav.component';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    MatToolbarModule,MatIconModule,MatButtonModule,MatTableModule,
+
+    MatToolbarModule,MatIconModule,MatButtonModule,MatTableModule,MatExpansionModule,
     MatFormFieldModule,MatCardModule,MatInputModule,MatSidenavModule,MatBadgeModule,HttpClientModule,LayoutModule,MatListModule,
     MatPaginatorModule,MatGridListModule,MatSnackBarModule,MatDialogModule,MatAutocompleteModule,NgbModule
   ],

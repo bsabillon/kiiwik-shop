@@ -4,8 +4,8 @@ import { HomeComponent} from './components/products/home/home.component'
 
 const routes: Routes = [
 
-  { path: '', component: HomeComponent },
-  { path: 'home', component: HomeComponent },
+  { path: ':id', component: HomeComponent },
+  { path: 'home/:id', component: HomeComponent },
   { path: '**', component: HomeComponent}
 
 

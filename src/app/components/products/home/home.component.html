@@ -1,10 +1,10 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #drawer class="sidenav" [ngClass]="{hidden: (isHandset$ | async) === false}" [fixedInViewport]="false"
+  <mat-sidenav #drawer class="sidenav" [ngClass]="{hidden: (isHandset$ | async) === false}" [fixedInViewport]="false"
     [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'"
     [opened]="(isHandset$ | async) === false">
-    <mat-toolbar class="titleLogo"><b>Kajulu</b></mat-toolbar>
+    <mat-toolbar class="titleLogo"><b>{{storeName}}</b></mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item >
+      <!-- <a mat-list-item >
         <mat-icon class="counter_product">
           home</mat-icon> INICIO
       </a>
@@ -19,20 +19,20 @@
       <a mat-list-item (click)="navigate('/contact', drawer)" >
         <mat-icon class="counter_product">
           contact_phone</mat-icon> CONTACTENOS
-      </a>
+      </a> -->
     </mat-nav-list>
   </mat-sidenav>
 
-  <mat-sidenav-content> 
+  <mat-sidenav-content>
     <mat-toolbar color="primary" class="expandToolBar">
-        <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()"
-          *ngIf="isHandset$ | async">
-          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-        </button>
-        <img class="logo" src="../../assets/kiiwik.png">
-        <!-- <p class="titleLogo"><b>J&J Sales</b></p> -->
-        <span class="spacer"></span>
-        <a *ngIf="(isHandset$ | async) === false" style="border-bottom: 1px solid #fff;" mat-list-item>
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <img class="logo" [src]="storeImage">
+      <p class="titleLogo"><b>{{storeName}}</b></p>
+      <span class="spacer"></span>
+      <!-- <a *ngIf="(isHandset$ | async) === false" style="border-bottom: 1px solid #fff;" mat-list-item>
           <mat-icon class="counter_product">
             home</mat-icon> Inicio
         </a>
@@ -47,71 +47,125 @@
         <a *ngIf="(isHandset$ | async) === false" mat-list-item routerLink="/contact">
           <mat-icon class="counter_product">
             contact_phone</mat-icon> Contactenos
-        </a>
-        <!-- <button mat-raised-button color="primary">Iniciar Sesión</button> -->
-      </mat-toolbar>
+        </a> -->
+      <!-- <button mat-raised-button color="primary">Iniciar Sesión</button> -->
+    </mat-toolbar>
 
-      <mat-toolbar style="background: rgba(255, 255, 255, 0.0)">
-        <div class="row">
-          
-        </div>
-        <input matInput type="text" class="searchTerm" [(ngModel)]="searchText" placeholder="Buscar...">
-      </mat-toolbar>
+    <mat-toolbar style="background: rgba(255, 255, 255, 0.0)">
+      <div class="row">
+
+      </div>
+      <input *ngIf="isAStore && !isLoading" matInput type="text" class="searchTerm" [(ngModel)]="searchText"
+        placeholder="Buscar...">
+    </mat-toolbar>
 
 
 
-      <mat-grid-list [cols]="breakpoint" rowHeight="2:2.7" (window:resize)="onResize($event)">
-        <ng-container>
-          <mat-grid-tile *ngFor="let product of products | filter: searchText; let i = index">
-            <mat-card class="bodyCards">
-              <h5 class="card_title">{{product.name}}</h5>
-              <h5 class="card_subTitle">{{product.description}}</h5>
-              <div class="card_img">
-                <img src="../../../../assets/product.png" alt="photo">
-              </div>
-              <div class="divInlineContainer">
-                <div class="divInline">
-                  <p class="card_text">{{product.price | currency: 'L '}}</p>
-                  <p class="counter">
-                    <mat-icon class="counter_product"  (click)="minusCuantity(i)">remove_circle</mat-icon> {{product.qtd}}
-                    <mat-icon class="counter_product" (click)="addCuantity(i)" >
-                      add_circle</mat-icon>
-                  </p>
-                </div>
-                <div class="divInline">
-                  <button mat-raised-button (click)="saveToCart(product)"  color="primary">Agregar <mat-icon>
-                      add_shopping_cart</mat-icon>
-                  </button>
-                </div>
-              </div>
-            </mat-card>
-          </mat-grid-tile>
-        </ng-container>
-      </mat-grid-list>
+    <mat-grid-list [cols]="breakpoint" rowHeight="2:2.7" (window:resize)="onResize($event)">
+      <ng-container>
+        <img class="isAStoreImg" *ngIf="!isAStore && !isLoading" src="../../../../assets/devices.png">
+        <h3 class="isAStoreText" *ngIf="!isAStore && !isLoading">¡Puedes compartir tu Catálogo Online en unos simples
+          pasos, para que tus clientes esten
+          más cerca de ti!
+        </h3>
+        <h3 class="isAStoreText" *ngIf="!isAStore && !isLoading">¡Descargar la app Kiiwik: Punto de Venta!
+          <a href="https://play.google.com/store/apps/details?id=com.bbj.inventorygp.firebase"><img
+              class="isAStoreImgAndroid" *ngIf="!isAStore && !isLoading" src="../../../../assets/android-boton.png"></a>
+        </h3>
+        <div class="loader" *ngIf="isLoading"></div>
+        <mat-drawer-container *ngIf="isAStore && !isLoading" class="sidenavContainer">
+          <mat-drawer mode="side" [ngClass]="{hidden: (isHandset$ | async) === true}" opened
+            class="sidenavContainerLeft">
+            <h5 class="card_title">Categorías</h5>
+            <mat-divider></mat-divider>
+            <div class="sidenavContainerDiv">
+              <p class="card_text">Sin Categoría</p>
+            </div>
+          </mat-drawer>
+          <mat-drawer-content>
+            <div class="accordionCategories" [ngClass]="{hidden: (isHandset$ | async) === false}">
+              <mat-accordion>
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      <h5 class="card_title">Categorías</h5>
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <p class="card_text">Sin Categoría</p>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+            <div *ngFor="let product of products | filter: searchText; let i = index">
+              <mat-card class="productCards" [ngClass]="{hidden: (isHandset$ | async) === false}">
+                <table>
+                  <tr>
+                    <td>
+                      <div class="card_img_device">
+                        <img
+                          [src]="(product.photoURL == null || product.photoURL == '') ? '../../../../assets/product.png' : product.photoURL"
+                          alt="photo">
+                      </div>
+                      <h5 class="card_title">{{product.name}}</h5>
+                      <h5 class="card_subTitle">{{product.description}}</h5>
+                      <p class="card_text">{{product.price | currency: 'L '}}</p>
+                      <p class="card_text">Disponible: {{product.stock}}</p>
+                    </td>
+                  </tr>
+                </table>
+              </mat-card>
+              <mat-card class="productCards" [ngClass]="{hidden: (isHandset$ | async) === true}">
+                <table>
+                  <tr>
+                    <td>
+                      <div class="card_img">
+                        <img
+                          [src]="(product.photoURL == null || product.photoURL == '') ? '../../../../assets/product.png' : product.photoURL"
+                          alt="photo">
+                      </div>
+                    </td>
+                    <td>
+                      <h5 class="card_title">{{product.name}}</h5>
+                      <h5 class="card_subTitle">{{product.description}}</h5>
+                      <p class="card_text">{{product.price | currency: 'L '}}</p>
+                      <p class="card_text">Disponible: {{product.stock}}</p>
+                    </td>
+                  </tr>
+                </table>
+              </mat-card>
+            </div>
+          </mat-drawer-content>
+        </mat-drawer-container>
+      </ng-container>
+    </mat-grid-list>
 
-      <div class="footer-distributed ">
-        <div class="footer-left ">
-          <img class="logo_footer" src="../../assets/img/kajulu.png">
-        </div>
-  
-        <div class="footer-center ">
-          <!-- <p class="footer-links ">
+    <div class="footer-distributed ">
+      <div class="footer-left ">
+        <img class="logo_footer" [src]="storeImage">
+      </div>
+
+      <div class="footer-center ">
+        <!-- <p class="footer-links ">
             <a href="# " class="link-1 ">Inicio</a>
             <a href="# ">Contactenos</a>
           </p> -->
-          <div>
-            <i class="fa fa-phone "></i>
-            <p>(504) 3286-8659</p>
-          </div>
-          <div>
-            <i class="fa fa-envelope "></i>
-            <p><a href="mailto:karenknak@hotmail.com">karenknak@hotmail.com</a></p>
-          </div>
+        <div>
+          <i class="fa fa-phone "></i>
+          <p>{{storePhone}}</p>
         </div>
-  
-        <div class="footer-right ">
-          <p class="footer-company-about ">
-            <span>Acerca de KAJULU</span>
+        <div>
+          <i class="fa fa-envelope "></i>
+          <p><a href="mailto:{{storeEmail}}">{{storeEmail}}</a></p>
+        </div>
+        <div>
+          <i class="fa fa-map-marker "></i>
+          <p>{{storeAddress}}</p>
+        </div>
+      </div>
+
+      <div class="footer-right ">
+
+        <!-- <p class="footer-company-about ">
+            <span>Acerca de {{storeName}}</span>
             Una Empresa de Ventas...
           </p>
           <div class="footer-icons ">
@@ -121,13 +175,13 @@
                 class="fa fa-instagram"></i></a>
             <a class="btn btn-icon btn-whatsapp" href="https://wa.me/50432868659/" target="_blank"><i
                 class="fa fa-whatsapp"></i></a>
-          </div>
-        </div>
+          </div> -->
       </div>
+    </div>
 
 
 
 
   </mat-sidenav-content>
 
-</mat-sidenav-container>   
+</mat-sidenav-container>
