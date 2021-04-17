@@ -79,7 +79,15 @@
             <h5 class="card_title">Categorías</h5>
             <mat-divider></mat-divider>
             <div class="sidenavContainerDiv">
-              <p class="card_text">Sin Categoría</p>
+              <p class="card_text" [style.color]="(searchText == 'Sin Categoría') ? 'green' : 'black'"
+                (click)="filterCategory('Sin Categoría')">
+                <li>Sin Categoría</li>
+              </p>
+              <p *ngFor="let category of categories" class="card_text"
+                [style.color]="(category.name == searchText) ? 'green' : 'black'"
+                (click)="filterCategory(category.name)">
+                <li>{{category.name}}</li>
+              </p>
             </div>
           </mat-drawer>
           <mat-drawer-content>
@@ -91,11 +99,18 @@
                       <h5 class="card_title">Categorías</h5>
                     </mat-panel-title>
                   </mat-expansion-panel-header>
-                  <p class="card_text">Sin Categoría</p>
+                  <p class="card_text" (click)="filterCategory('Sin Categoría')">
+                    <li>Sin Categoría</li>
+                  </p>
+                  <p *ngFor="let category of categories" class="card_text"
+                    [style.color]="(category.name == searchText) ? 'green' : 'black'"
+                    (click)="filterCategory(category.name)">
+                    <li>{{category.name}}</li>
+                  </p>
                 </mat-expansion-panel>
               </mat-accordion>
             </div>
-            <div *ngFor="let product of products | filter: searchText; let i = index">
+            <div *ngFor="let product of products | filter: searchText as filteredItems; let i = index" #filter>
               <mat-card class="productCards" [ngClass]="{hidden: (isHandset$ | async) === false}">
                 <table>
                   <tr>
@@ -109,6 +124,7 @@
                       <h5 class="card_subTitle">{{product.description}}</h5>
                       <p class="card_text">{{product.price | currency: 'L '}}</p>
                       <p class="card_text">Disponible: {{product.stock}}</p>
+                      <p class="card_text">Categoría: {{product.category.name}}</p>
                     </td>
                   </tr>
                 </table>
@@ -128,11 +144,25 @@
                       <h5 class="card_subTitle">{{product.description}}</h5>
                       <p class="card_text">{{product.price | currency: 'L '}}</p>
                       <p class="card_text">Disponible: {{product.stock}}</p>
+                      <p class="card_text">Categoría: {{product.category.name}}</p>
                     </td>
                   </tr>
                 </table>
               </mat-card>
             </div>
+            <mat-card *ngIf="!filteredItems.length" class="productCards">
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+              <h3 class="isAStoreText">¡No Hay Productos Disponibles!</h3>
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+            </mat-card>
           </mat-drawer-content>
         </mat-drawer-container>
       </ng-container>

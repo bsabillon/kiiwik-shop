@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, Output, ViewChild, ViewChildren } from '@angular/core';
 import { ProductsService } from '../../../services/products.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
@@ -15,6 +15,7 @@ import { NgbCarousel, NgbSlideEvent, NgbSlideEventSource } from '@ng-bootstrap/n
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  @ViewChildren('filter') filteredItems: any = [];
   public cartItems!: number;
   public storeDomain = '';
   storeName: String = '';
@@ -25,6 +26,7 @@ export class HomeComponent implements OnInit {
   isLoading: boolean = true;
   isAStore: boolean = false;
   public products: any = [];
+  public categories: any = [];
   public store: any = [];
   public havePhoto: boolean = false;
   breakpoint: any;
@@ -36,10 +38,15 @@ export class HomeComponent implements OnInit {
     private breakpointObserver: BreakpointObserver,
     public router: Router,
     private _snackBar: MatSnackBar,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private cdRef: ChangeDetectorRef
   ) {
     let id = this._route.snapshot.paramMap.get('id');
     this.storeDomain = `${id}`;
+  }
+
+  ngAfterViewChecked() {
+    this.cdRef.detectChanges();
   }
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
@@ -58,18 +65,22 @@ export class HomeComponent implements OnInit {
     this.dataApi.getProducts(this.storeDomain).subscribe((store: any) => {
       this.store = store;
       console.log(store)
-      this.isAStore = true;
-      this.isLoading = false;
       this.storeName = store['storeName'];
       this.storeImage = (store['photoURL'] == null || store['photoURL'] == '') ? '../../assets/kiiwik.png' : store['photoURL'];
       this.storeEmail = (store['email'] == null || store['email'] == '') ? 'Muy Pronto' : store['email'];
       this.storePhone = (store['phone'] == null || store['phone'] == '') ? 'Muy Pronto' : store['phone'];
       this.storeAddress = (store['address'] == null || store['address'] == '') ? 'Muy Pronto' : store['address'];
       this.products = this.store.products;
-      this.products.forEach((product: { qtd: number; }) => {
+      this.products.forEach((product: { qtd: number; category: { name: string; } | null; }) => {
         product.qtd = 1;
+        if (product.category == null) {
+          product.category = { name: 'Sin Categoría' };
+        }
       });
-      console.log(this.products);
+      this.categories = this.store.categories;
+      this.isAStore = true;
+      this.isLoading = false;
+      console.log(this.store.products);
     }, (error: any) => {
       this.isAStore = false;
       this.isLoading = false;
@@ -97,6 +108,10 @@ export class HomeComponent implements OnInit {
     if (product.photoURL == "") {
       product.photoURL = "../../../../assets/product.png"
     }
+  }
+
+  filterCategory(text: string) {
+    this.searchText = text;
   }
 
   countCartItems() {
